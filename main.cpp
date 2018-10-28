@@ -2,6 +2,7 @@
 #include <random>
 #include <assert.h>
 #include <string.h>
+#include <algorithm> //funcion swap
 
 using namespace std;
 
@@ -12,6 +13,7 @@ mt19937 rng;
 
 int generateRandomInt(int min, int max);
 void printArray(int *array, size_t size);
+void heapify(int *array,size_t size,int i);//crear heapify para el heapsort
 void heapsort(int* array, size_t size);
 bool validate(int* array, size_t size);
 
@@ -27,8 +29,11 @@ int main(int argc, char *argv[]) {
         numbers[i] = generateRandomInt(0, 100);
     }
 
+    cout<<"Elementos del array:"<<endl;
     printArray(numbers, numberOfElements);
+    cout<<endl;
     heapsort(numbers, numberOfElements);
+    cout<<"Array ordenado:"<<endl;
     printArray(numbers, numberOfElements);
     assert(validate(numbers, numberOfElements) && "The sort is not ordering all the elements");
 
@@ -48,8 +53,31 @@ void printArray(int *array, size_t size) {
     cout << endl;
 }
 
+void heapify(int *array,size_t size,int i){
+    int masLargo = i; //el mas largo es la raiz
+    int izquierda = 2*i+1; 
+    int derecha = 2*i+2;
+
+    if (izquierda < size && array[izquierda] > array[masLargo]){ //si la izquierda es mas largo que la raiz
+        masLargo = izquierda;
+    }
+    if (derecha < size && array[derecha] > array[masLargo]){ //si la derecha es mas largo que la raiz
+        masLargo = derecha;
+    }
+    if (masLargo != i){ //si el mas largo no es la raiz
+        swap(array[i],array[masLargo]);
+        heapify(array,size,masLargo);
+    }
+}
+
 void heapsort(int* array, size_t size) {
-    // TODO
+    for (int i = size/2 - 1; i >= 0; i--){
+        heapify(array,size,i);//construccion del heap
+    }
+    for (int i = size-1; i >= 0; i--){
+        swap(array[0],array[i]);//mover la raiz al final
+        heapify(array,i,0);//heapify del heap reducido
+    }
 }
 
 bool validate(int* array, size_t size) {
